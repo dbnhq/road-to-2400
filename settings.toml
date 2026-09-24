@@ -1,0 +1,19 @@
+[general]
+# Models in this list use the /chat/completions endpoint; anything else uses /completions.
+chat_models = ["gpt-4", "gpt-4-turbo", "gpt-3.5-turbo", "gpt-4o", "gpt-4o-mini"]
+model = "gpt-4o-mini"
+max_tokens = 500
+temperature = 0.7
+
+[prompts]
+role_prompt = "You are an expert SAT tutor who writes clear, fair practice questions in the exact style of the SAT."
+
+instruction_prompt = "Now generate ONE new SAT-style multiple-choice practice question on a similar topic, with 4 answer choices (A-D) and the correct answer indicated at the end. Do not repeat the examples above."
+
+positive_example = "If 3x + 5 = 20, what is the value of x?"
+positive_reasoning = "This is a good example: it is a short linear equation typical of the SAT Heart of Algebra section, has one unambiguous answer, and the difficulty matches a real test question."
+positive_output = "A) 3\nB) 5\nC) 7\nD) 15\nAnswer: B"
+
+negative_example = "What is the best color?"
+negative_reasoning = "This is a bad example: it is subjective, has no correct answer, and does not resemble any SAT question format."
+negative_output = "A) Red\nB) Blue\nC) Green\nD) Yellow\nAnswer: unclear"

@@ -1,12 +1,8 @@
 import argparse
-import os
 import tomllib
 from pathlib import Path
 
 import openai
-
-# Authenticate
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 class Settings(dict):
@@ -46,33 +42,35 @@ def parse_args() -> argparse.Namespace:
 
 
 def main(args: argparse.Namespace) -> None:
+    # Reads OPENAI_API_KEY from the environment.
+    client = openai.OpenAI()
     file_content = args.file_path.read_text("utf-8")
     settings = Settings.load(Path("settings.toml"))
     if settings.model_supports_chat_completions:
-        print(get_chat_completion(file_content, settings))
+        print(get_chat_completion(client, file_content, settings))
     else:
-        print(get_completion(file_content, settings))
+        print(get_completion(client, file_content, settings))
 
 
-def get_completion(content: str, settings: Settings) -> str:
+def get_completion(client: openai.OpenAI, content: str, settings: Settings) -> str:
     """Send a request to the /completions endpoint."""
-    response = openai.Completion.create(
+    response = client.completions.create(
         model=settings.model,
         prompt=assemble_prompt(content, settings),
         max_tokens=settings.max_tokens,
         temperature=settings.temperature,
     )
-    return response["choices"][0]["text"]
+    return response.choices[0].text
 
 
-def get_chat_completion(content: str, settings: Settings) -> str:
+def get_chat_completion(client: openai.OpenAI, content: str, settings: Settings) -> str:
     """Send a request to the /chat/completions endpoint."""
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model=settings.model,
         messages=assemble_chat_messages(content, settings),
         temperature=settings.temperature,
     )
-    return response["choices"][0]["message"]["content"]
+    return response.choices[0].message.content
 
 
 def assemble_prompt(content: str, settings: Settings) -> str:
